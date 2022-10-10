@@ -22,18 +22,31 @@
             }
             echo "</select>";
         ?>
-        <Input type="text" placeholder="Preço de Custo: " name="precoCusto">
-        <Input type="text" placeholder="Preço de Venda: " name="precoVenda">
+        <Input type="number" placeholder="Preço de Custo: " name="precoCusto">
+        <Input type="number" placeholder="Preço de Venda: " name="precoVenda">
         <Input type="number" placeholder="Estoque: " name="estoque">
         <Input type="submit" value="Enviar" name="gravar">
 
     </form>
     <?php  
-        if(isset($_POST['id'])){
-            $set =  $_POST['id'];
-            
+        include 'conn.php';
+        if(isset($_POST['gravar'])){
+            $nome = $_POST['nomeProduto'];
+            $set = $_POST['id'];
+            $custo = $_POST['precoCusto'];
+            $venda = $_POST['precoVenda'];
+            $estoque = $_POST['estoque'];
+            $sit = 1;
+            //echo $nome.'</br>'.$set.'</br>'.$custo.'</br>'.$venda.'</br>'.$estoque;
+            $grava = $conn -> prepare('INSERT INTO `produtos` (`id_prod`, `nome_prod`, `setor_prod`, `custo_prod`, `venda_prod`, `estoque_prod`, `situacao_prod`) VALUES (NULL, :pnome, :pid, :pcusto, :pvenda, :pestoque, :psit);');
+            $grava -> bindValue(':pnome',$nome);
+            $grava -> bindValue(':pid',$set);
+            $grava -> bindValue(':pcusto',$custo);
+            $grava -> bindValue(':pvenda',$venda);
+            $grava -> bindValue(':pestoque', $estoque);
+            $grava -> bindValue(':psit', $sit);
+            $grava -> execute();
         }
-
 
     ?>
 
