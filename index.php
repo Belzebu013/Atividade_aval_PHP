@@ -47,7 +47,7 @@
         form{
             margin-top: 10px;
             text-align: center;
-            padding: 5px;
+            padding: 20px;
         }
 
         input:hover{
@@ -106,7 +106,7 @@
             $set = $_POST['id'];
             $custo = floatval($_POST['precoCusto']);
             $venda = floatval($_POST['precoVenda']);
-            $estoque = $_POST['estoque'];
+            $estoque = intval($_POST['estoque']);
             $sit = 1;
             //echo $nome.'</br>'.$set.'</br>'.$custo.'</br>'.$venda.'</br>'.$estoque;
             $grava = $conn -> prepare('INSERT INTO `produtos` (`id_prod`, `nome_prod`, `setor_prod`, `custo_prod`, `venda_prod`, `estoque_prod`, `situacao_prod`) VALUES (NULL, :pnome, :pid, :pcusto, :pvenda, :pestoque, :psit);');
@@ -122,25 +122,16 @@
     <hr>
     
     <table class="table"> 
-        <!--
-        <td>Código</td>
-        <td>Nome do Produto</td>
-        <td>Setor</td>
-        <td>Custo de Produção</td>
-        <td>Custo de Venda</td>
-        <td>Estoque</td>
-        <td>Situação</td>
-        <td></td>
-    -->
         <thead>
             <tr>
-            <th scope="col">Código</th>
+           <!-- <th scope="col">Código</th> -->
             <th scope="col">Nome do Produto</th>
             <th scope="col">Setor</th>
             <th scope="col">Custo de Produção</th>
             <th scope="col">Custo de Venda</th>
             <th scope="col">Estoque</th>
             <th scope="col">Situação</th>
+            <th scope="col"></th>
             <th scope="col"></th>
             </tr>
         </thead>
@@ -186,9 +177,39 @@
                 //echo "<td>".$row['situacao_prod']."</td>";
                 //echo "<td><a href='index.php?aviso&id= ".base64_encode($row['id_cad'])."&nome=".base64_encode($row['nome_cad'])."'>Excluir</a></td>";
                 echo "<td><a href='index.php?aviso&id= ".$row['id_prod']."&nome=".$row['nome_prod']."'>Excluir</a></td>";
+                echo "<td><a href='index.php?altera&id= ".$row['id_prod']."'>Alterar</a></td>";
+
                 echo "<tr>";
             }
             echo '</tbody>';
+        }
+
+        //Alteração
+        if(isset($_GET['altera'])){
+            $id = $_GET['id'];
+            $alterar = $conn -> prepare('SELECT * FROM `produtos` WHERE `id_prod`= ?;');
+            $alterar -> bindParam(1, $id);
+            $alterar -> execute();
+            $row = $alterar -> fetch();
+
+            ?>
+       <center>     
+        <form action="index.php" method="POST">
+            <Input type="hidden" name="id" placeholder="id: " value="<?php echo base64_encode($row['id_prod']) ?>">
+            <Input type="text" placeholder="Nome do produto: " name="nomeProduto" value="<?php echo $row['nome_prod'] ?>"> 
+            <Input type="text" placeholder="Preço de Custo: " name="precoCusto" value="<?php echo $row['custo_prod'] ?>">
+            <Input type="text" placeholder="Preço de Venda: " name="precoVenda" value="<?php echo $row['custo_prod'] ?>">
+            <Input type="number" placeholder="Estoque: " name="estoque" value="<?php echo $row['estoque_prod'] ?>">
+            <Input type="submit" value="Alterar" name="Alterar" class="bt1">
+        </form>
+        </center>    
+    </br>
+        </br>
+      
+            <?php
+
+
+
         }
 
         //excluir arquivos
@@ -207,6 +228,9 @@
             echo "<h4>Deseja excluir ".$nome."?</br>";
             echo "<h4><a href='index.php?excluir&id=$id&nome=$nome'>SIM</a></h4>"."&nbsp &nbsp"."<h4><a href='index.php'>NÃO</a></h4>";
         }
+
+
+
     ?>
     </table>
 
